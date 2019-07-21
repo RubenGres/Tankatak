@@ -1,6 +1,6 @@
 /** @type {import ("../typings/phaser")} */
 
-var config = {
+let config = {
     type: Phaser.AUTO,
     width: 800,
     height: 450,
@@ -22,40 +22,54 @@ var config = {
     antialias: false
 };
 
+let keys;
+
 /* constants */
 SCROLLSPEED = 2;
 GROUNDLEVEL = config.height * 0.88;
 TANKSPEED = 160;
 GUNSPEED = 2.5;
+BULLETSPEED = 1000;
+RELOADTIME = 250;
 
 /* create the game */
 let game = new Phaser.Game(config);
 
+bkg_jungle = new background();
+tank = new player();
+
 /* reference the functions in files */
 function preload(){
     game = this;
-    this.load.image('tank_gun', 'assets/tank_gun.png');
-    this.load.spritesheet('tank', 'assets/tank.png', { frameWidth: 93, frameHeight: 48 });
+    this.load.image('bullet', '../assets/bullet2.png');
+    this.load.spritesheet('tank_gun', '../assets/tank_gun2.png', { frameWidth: 32, frameHeight: 12 });
+    this.load.spritesheet('tank', '../assets/tank.png', { frameWidth: 95, frameHeight: 48 });
     
     /*backgrounds*/
-    bkg_jungle = new background();
-    bkg_jungle.preload('jungle', 'assets/bkg/jungle', 6);
+    bkg_jungle.preload('jungle', '../assets/bkg/jungle', 6);
 }
 
 function create(){
+    addPlatform(0,GROUNDLEVEL,config.width,1);
+
+    /* add background */
     bkg_jungle.create();
     
-    addPlatform(0,GROUNDLEVEL,config.width,1);
-    
     /* add player */
-    player = new player(100, GROUNDLEVEL - 30, this);
+    tank.create(100, GROUNDLEVEL - 30, this);    
 
-    /* listen for keyboard input */
-    cursors = this.input.keyboard.createCursorKeys();
+    /* keyboard input */
+    keys = {Z : this.input.keyboard.addKey('Z'),
+    Q : this.input.keyboard.addKey('Q'),
+    S : this.input.keyboard.addKey('S'),
+            D : this.input.keyboard.addKey('D'),
+            SPACE : this.input.keyboard.addKey('SPACE'),
+            SHIFT : this.input.keyboard.addKey('SHIFT')
+    }
 }
 
 function update(){
-    player.update();
+    tank.update();
     bkg_jungle.update();
 }
 
